@@ -148,8 +148,9 @@ class TagDeatils(APIView):
     permission_classes = (IsAuthenticated, )
   
     def get(self, request):
-        content = {'message': 'Hello, Testing'}
-        return Response(content)
+        tagsView = Tags.objects.all()
+        data=tagsView.values()
+        return JsonResponse(list(data),safe=False)
 
 
 
