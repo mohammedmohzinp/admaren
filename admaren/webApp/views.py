@@ -14,8 +14,9 @@ from rest_framework.status import (
 from .models import *
 from datetime import datetime
 from django.http import JsonResponse
-
-
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
+from .serializers import SnippetsDetailSerializer, SnipppetsListSerialzer,TagsDetailSerializer
+from rest_framework.pagination import LimitOffsetPagination
 
 
 
@@ -26,7 +27,8 @@ class Overview(APIView):
         snippet_count = Snippet.objects.count()
         array=[]
         array.append({"total count":snippet_count,"list":"none"})
-        return JsonResponse(list(array),safe=False)
+        return Response(array)
+        # return JsonResponse(list(array),safe=False)
 
 
 
@@ -144,13 +146,12 @@ class TagList(APIView):
         data=tagsView.values()
         return JsonResponse(list(data),safe=False)
 
-class TagDeatils(APIView):
+
+class TagDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, )
-  
-    def get(self, request):
-        tagsView = Tags.objects.all()
-        data=tagsView.values()
-        return JsonResponse(list(data),safe=False)
+
+    queryset = Snippet.objects.all()
+    serializer_class = TagsDetailSerializer
 
 
 
@@ -162,3 +163,17 @@ def str_to_bool(s):
          return False
     else:
          return False
+
+
+
+
+
+class SnippetsListView(ListAPIView):
+  queryset = Snippet.objects.all()
+  serializer_class = SnipppetsListSerialzer
+  pagination_class = LimitOffsetPagination
+
+
+class SnippetsDetailView(RetrieveUpdateDestroyAPIView):
+  queryset = Snippet.objects.all()
+  serializer_class = SnippetsDetailSerializer
